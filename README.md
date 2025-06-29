@@ -7,7 +7,7 @@
 
 A web-based diabetes prediction application that uses **Machine Learning** to assess diabetes risk based on medical parameters. Built with **Logistic Regression** and deployed using **Flask** web framework.
 
-![Diabetes Predictor Demo](https://via.placeholder.com/800x400/667eea/ffffff?text=Diabetes+Predictor+Screenshot)
+![image](https://github.com/user-attachments/assets/cd41e6db-b5f5-4e1c-91c9-94f25aa0e157)
 
 ## 🎯 Overview
 
