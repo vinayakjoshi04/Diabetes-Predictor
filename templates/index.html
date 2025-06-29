@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Risk Predictor - Health Assessment Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            font-weight: 400;
+        }
+
+        .health-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #e74c3c;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            color: #34495e;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group input:hover {
+            border-color: #bdc3c7;
+        }
+
+        .info-tooltip {
+            position: absolute;
+            right: 10px;
+            top: 35px;
+            width: 20px;
+            height: 20px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: help;
+            transition: all 0.3s ease;
+        }
+
+        .info-tooltip:hover {
+            background: #2980b9;
+            transform: scale(1.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .prediction-result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .prediction-positive {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border-left: 5px solid #c0392b;
+        }
+
+        .prediction-negative {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: white;
+            border-left: 5px solid #27ae60;
+        }
+
+        .disclaimer {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #f39c12;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .disclaimer strong {
+            color: #e67e22;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        .field-descriptions {
+            display: none;
+            position: fixed;
+            background: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            z-index: 1000;
+            max-width: 250px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="health-icon">🩺</div>
+            <h1>Diabetes Risk Predictor</h1>
+            <p class="subtitle">Advanced Health Assessment Tool</p>
+        </div>
+
+        <form id="diabetesForm" onsubmit="return predictDiabetes(event)">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="pregnancies">Number of Pregnancies</label>
+                    <input type="number" id="pregnancies" name="Pregnancies" min="0" max="20" step="1" required>
+                    <div class="info-tooltip" data-info="Number of times pregnant (0 if never pregnant)">?</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="glucose">Glucose Level (mg/dL)</label>
+                    <input type="number" id="glucose" name="Glucose" min="0" max="300" step="0.1" required>
+                    <div class="info-tooltip" data-info="Plasma glucose concentration (normal: 70-100 mg/dL fasting)">?</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bloodpressure">Blood Pressure (mmHg)</label>
+                    <input type="number" id="bloodpressure" name="BloodPressure" min="0" max="200" step="1" required>
+                    <div class="info-tooltip" data-info="Diastolic blood pressure (normal: 60-80 mmHg)">?</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="skinthickness">Skin Thickness (mm)</label>
+                    <input type="number" id="skinthickness" name="SkinThickness" min="0" max="100" step="0.1" required>
+                    <div class="info-tooltip" data-info="Triceps skin fold thickness (normal: 12-25 mm)">?</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="insulin">Insulin Level (μU/mL)</label>
+                    <input type="number" id="insulin" name="Insulin" min="0" max="1000" step="0.1" required>
+                    <div class="info-tooltip" data-info="2-Hour serum insulin (normal: 16-166 μU/mL)">?</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bmi">Body Mass Index (BMI)</label>
+                    <input type="number" id="bmi" name="BMI" min="10" max="60" step="0.1" required>
+                    <div class="info-tooltip" data-info="Weight in kg/(height in m)² (normal: 18.5-24.9)">?</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pedigree">Diabetes Pedigree Function</label>
+                    <input type="number" id="pedigree" name="DiabetesPedigreeFunction" min="0" max="3" step="0.001" required>
+                    <div class="info-tooltip" data-info="Genetic predisposition score (0.078-2.42 typical range)">?</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Age (years)</label>
+                    <input type="number" id="age" name="Age" min="1" max="120" step="1" required>
+                    <div class="info-tooltip" data-info="Age in years">?</div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Analyze Risk
+            </button>
+        </form>
+
+        <!-- Prediction result placeholder -->
+        <div id="predictionResult" class="prediction-result" style="display: none;">
+            <h3 id="predictionText"></h3>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Important Medical Disclaimer:</strong> This tool is for educational purposes only and should not replace professional medical advice. Please consult with a qualified healthcare provider for proper diabetes screening and diagnosis.
+        </div>
+    </div>
+
+    <div class="field-descriptions" id="tooltip"></div>
+
+    <script>
+        // Tooltip functionality
+        document.querySelectorAll('.info-tooltip').forEach(tooltip => {
+            tooltip.addEventListener('mouseenter', function(e) {
+                const tooltipDiv = document.getElementById('tooltip');
+                tooltipDiv.textContent = this.getAttribute('data-info');
+                tooltipDiv.style.display = 'block';
+                
+                const rect = this.getBoundingClientRect();
+                tooltipDiv.style.left = (rect.left - 125) + 'px';
+                tooltipDiv.style.top = (rect.top - 50) + 'px';
+            });
+            
+            tooltip.addEventListener('mouseleave', function() {
+                document.getElementById('tooltip').style.display = 'none';
+            });
+        });
+
+        // Form validation and enhancement
+        document.getElementById('diabetesForm').addEventListener('submit', function(e) {
+            // This is now handled by the predictDiabetes function
+        });
+
+        // Input validation and formatting
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) this.value = 0;
+            });
+        });
+
+        // Diabetes prediction function
+        function predictDiabetes(event) {
+            event.preventDefault(); // Prevent form submission
+            
+            const button = document.querySelector('.submit-btn');
+            button.textContent = 'Analyzing...';
+            button.disabled = true;
+            
+            // Get form values
+            const pregnancies = parseFloat(document.getElementById('pregnancies').value);
+            const glucose = parseFloat(document.getElementById('glucose').value);
+            const bloodPressure = parseFloat(document.getElementById('bloodpressure').value);
+            const skinThickness = parseFloat(document.getElementById('skinthickness').value);
+            const insulin = parseFloat(document.getElementById('insulin').value);
+            const bmi = parseFloat(document.getElementById('bmi').value);
+            const pedigree = parseFloat(document.getElementById('pedigree').value);
+            const age = parseFloat(document.getElementById('age').value);
+            
+            // Simple rule-based prediction algorithm
+            // This is a simplified version - in production you'd use a trained ML model
+            let riskScore = 0;
+            let riskFactors = [];
+            
+            // Glucose risk assessment
+            if (glucose >= 126) {
+                riskScore += 3;
+                riskFactors.push('High glucose level (≥126 mg/dL)');
+            } else if (glucose >= 100) {
+                riskScore += 2;
+                riskFactors.push('Elevated glucose level (100-125 mg/dL)');
+            }
+            
+            // BMI risk assessment
+            if (bmi >= 30) {
+                riskScore += 2;
+                riskFactors.push('Obesity (BMI ≥30)');
+            } else if (bmi >= 25) {
+                riskScore += 1;
+                riskFactors.push('Overweight (BMI 25-29.9)');
+            }
+            
+            // Age risk assessment
+            if (age >= 45) {
+                riskScore += 1;
+                riskFactors.push('Age 45 or older');
+            }
+            
+            // Blood pressure risk assessment
+            if (bloodPressure >= 90) {
+                riskScore += 1;
+                riskFactors.push('High blood pressure (≥90 mmHg)');
+            }
+            
+            // Insulin risk assessment
+            if (insulin >= 200) {
+                riskScore += 1;
+                riskFactors.push('High insulin levels');
+            }
+            
+            // Pedigree function risk assessment
+            if (pedigree >= 0.5) {
+                riskScore += 1;
+                riskFactors.push('Family history of diabetes');
+            }
+            
+            // Pregnancy risk assessment (for women)
+            if (pregnancies >= 3) {
+                riskScore += 1;
+                riskFactors.push('Multiple pregnancies');
+            }
+            
+            // Skin thickness assessment
+            if (skinThickness >= 30) {
+                riskScore += 1;
+                riskFactors.push('Increased skin fold thickness');
+            }
+            
+            // Show result after delay for better UX
+            setTimeout(() => {
+                const resultDiv = document.getElementById('predictionResult');
+                const textDiv = document.getElementById('predictionText');
+                
+                let resultText = '';
+                let riskLevel = '';
+                
+                if (riskScore >= 5) {
+                    resultDiv.className = 'prediction-result prediction-positive';
+                    riskLevel = 'HIGH RISK';
+                    resultText = `🚨 ${riskLevel} - Strong indicators for diabetes risk detected`;
+                } else if (riskScore >= 3) {
+                    resultDiv.className = 'prediction-result prediction-positive';
+                    riskLevel = 'MODERATE RISK';
+                    resultText = `⚠️ ${riskLevel} - Some risk factors present for diabetes`;
+                } else if (riskScore >= 1) {
+                    resultDiv.className = 'prediction-result prediction-negative';
+                    riskLevel = 'LOW TO MODERATE RISK';
+                    resultText = `🟡 ${riskLevel} - Few risk factors detected`;
+                } else {
+                    resultDiv.className = 'prediction-result prediction-negative';
+                    riskLevel = 'LOW RISK';
+                    resultText = `✅ ${riskLevel} - Minimal risk factors detected`;
+                }
+                
+                // Add risk factors to the result
+                if (riskFactors.length > 0) {
+                    resultText += `<br><br><strong>Key Risk Factors:</strong><br>• ${riskFactors.join('<br>• ')}`;
+                }
+                
+                // Add recommendation
+                if (riskScore >= 3) {
+                    resultText += `<br><br><strong>Recommendation:</strong> Please consult with a healthcare professional for proper diabetes screening and advice.`;
+                } else {
+                    resultText += `<br><br><strong>Recommendation:</strong> Maintain a healthy lifestyle with regular exercise and balanced diet. Continue regular health check-ups.`;
+                }
+                
+                textDiv.innerHTML = resultText;
+                resultDiv.style.display = 'block';
+                
+                // Scroll to result
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Reset button
+                button.textContent = 'Analyze Risk';
+                button.disabled = false;
+            }, 1500);
+            
+            return false; // Prevent form submission
+        }
+    </script>
+</body>
+</html>
