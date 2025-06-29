@@ -230,7 +230,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **GitHub**: [@vinayakjoshi04](https://github.com/vinayakjoshi04)
 - **Email**: vinayakjoshi2004@gmail.com
-- **LinkedIn**: [Your Profile](https://www.linkedin.com/in/vinayak-joshi-99521528b/)
+- **LinkedIn**: [Vinayak Joshi](https://www.linkedin.com/in/vinayak-joshi-99521528b/)
 
 ---
 
